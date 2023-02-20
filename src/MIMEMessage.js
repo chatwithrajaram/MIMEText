@@ -130,6 +130,22 @@ export default class MIMEMessage {
     return this
   }
 
+  setInlineAttachment(filename, type, data, conentId, moreHeaders={}) {
+    const headers = Object.assign({}, moreHeaders, {
+      'Content-Type': `${type};filename="${filename}"`,
+      'Content-Transfer-Encoding': 'base64',
+      'Content-Disposition': `line;filename="${filename}"`,
+      'Content-ID': `<${conentId}>`,
+    })
+    const msg = new MIMEMessageContent(data)
+
+    msg.setHeaders(headers)
+
+    this.messages.push(msg)
+
+    return this
+  }
+
   getMessageByType(type) {
     const matches = this.messages.filter(m => m.getHeader('Content-Type').indexOf(type) !== -1)
     if (Array.isArray(matches) && matches.length > 0) {
